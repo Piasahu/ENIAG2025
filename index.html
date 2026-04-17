@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ENIAG 2025 Dashboard</title>
+  <style>
+    :root {
+      --bg: #040b16;
+      --bg-soft: #091529;
+      --panel: rgba(9, 22, 45, 0.78);
+      --panel-strong: rgba(10, 28, 57, 0.92);
+      --line: rgba(122, 194, 255, 0.18);
+      --line-strong: rgba(122, 194, 255, 0.42);
+      --text: #ecf7ff;
+      --muted: #9bb9d8;
+      --accent: #56d5ff;
+      --accent-2: #2f8cff;
+      --accent-3: #8be9ff;
+      --good: #59f3c2;
+      --warn: #ffd970;
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.4);
+      --radius: 22px;
+      --radius-sm: 14px;
+      --heading: "Avenir Next Condensed", "Trebuchet MS", "Arial Narrow", sans-serif;
+      --body: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--body);
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(86, 213, 255, 0.12), transparent 28%),
+        radial-gradient(circle at 82% 12%, rgba(47, 140, 255, 0.16), transparent 28%),
+        radial-gradient(circle at 76% 78%, rgba(76, 203, 255, 0.08), transparent 30%),
+        linear-gradient(180deg, #030812 0%, #07101d 55%, #050b16 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(rgba(122, 194, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(122, 194, 255, 0.05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), transparent 96%);
+    }
+
+    body::after {
+      background:
+        linear-gradient(180deg, transparent, rgba(86, 213, 255, 0.03), transparent);
+      animation: sweep 7s linear infinite;
+      opacity: 0.5;
+    }
+
+    @keyframes sweep {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: min(1440px, calc(100% - 32px));
+      margin: 20px auto 36px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(15, 36, 72, 0.92), rgba(6, 18, 39, 0.9)),
+        linear-gradient(90deg, rgba(86, 213, 255, 0.12), transparent);
+      border: 1px solid var(--line-strong);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      padding: 28px 28px 24px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: auto -10% -40% auto;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(86, 213, 255, 0.22), transparent 68%);
+      filter: blur(10px);
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid rgba(139, 233, 255, 0.26);
+      border-radius: 999px;
+      background: rgba(86, 213, 255, 0.08);
+      color: var(--accent-3);
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow a,
+    .footer a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(139, 233, 255, 0.4);
+    }
+
+    .eyebrow a:hover,
+    .footer a:hover {
+      border-bottom-color: rgba(139, 233, 255, 0.9);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      margin: 0;
+      font-family: var(--heading);
+      letter-spacing: 0.02em;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 0.95;
+      margin-top: 16px;
+      max-width: 860px;
+      text-wrap: balance;
+    }
+
+    .hero-subtitle {
+      margin-top: 14px;
+      max-width: 900px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .meta-card {
+      background: rgba(5, 15, 30, 0.56);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+      min-height: 116px;
+      backdrop-filter: blur(10px);
+    }
+
+    .meta-label {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-3);
+    }
+
+    .meta-value {
+      font-family: var(--heading);
+      font-size: clamp(1.5rem, 2vw, 2rem);
+      margin-top: 10px;
+    }
+
+    .meta-note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .lang-toggle {
+      display: inline-flex;
+      padding: 5px;
+      border-radius: 999px;
+      background: rgba(4, 12, 24, 0.76);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .lang-toggle button {
+      cursor: pointer;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 10px 14px;
+      min-width: 92px;
+      font-weight: 700;
+      border-radius: 999px;
+      transition: 180ms ease;
+      font-family: var(--body);
+    }
+
+    .lang-toggle button.active {
+      color: #031220;
+      background: linear-gradient(90deg, var(--accent), #8de7ff);
+      box-shadow: 0 0 20px rgba(86, 213, 255, 0.34);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(9, minmax(145px, 1fr));
+      gap: 10px;
+      margin: 18px 0 20px;
+    }
+
+    .tab-btn {
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: rgba(7, 18, 36, 0.7);
+      color: var(--text);
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      text-align: left;
+      min-height: 88px;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    .tab-btn:hover,
+    .tab-btn:focus-visible {
+      transform: translateY(-2px);
+      border-color: rgba(86, 213, 255, 0.5);
+      outline: none;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(180deg, rgba(19, 51, 100, 0.96), rgba(8, 22, 46, 0.92));
+      border-color: rgba(86, 213, 255, 0.6);
+      box-shadow: 0 0 24px rgba(47, 140, 255, 0.16);
+    }
+
+    .tab-kicker {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--accent-3);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .tab-title {
+      display: block;
+      font-size: 0.96rem;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    .content {
+      display: grid;
+      gap: 16px;
+    }
+
+    .section-hero,
+    .panel,
+    .quote-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .section-hero {
+      padding: 24px;
+      background:
+        linear-gradient(135deg, rgba(17, 38, 70, 0.96), rgba(7, 18, 37, 0.84)),
+        radial-gradient(circle at top right, rgba(86, 213, 255, 0.16), transparent 35%);
+    }
+
+    .section-kicker {
+      color: var(--accent-3);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.78rem;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(1.7rem, 2.5vw, 2.7rem);
+      line-height: 1;
+      max-width: 820px;
+      text-wrap: balance;
+    }
+
+    .section-intro {
+      margin-top: 14px;
+      max-width: 920px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(86, 213, 255, 0.08);
+      border: 1px solid rgba(86, 213, 255, 0.18);
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.four {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    .panel-title {
+      font-size: 1.18rem;
+      margin-bottom: 10px;
+    }
+
+    .panel-subtitle {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.96rem;
+      margin-bottom: 18px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .stat-card {
+      background: rgba(4, 14, 28, 0.68);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 130px;
+    }
+
+    .stat-value {
+      font-family: var(--heading);
+      font-size: clamp(1.55rem, 2vw, 2.2rem);
+      margin: 8px 0 10px;
+    }
+
+    .stat-label {
+      color: var(--accent-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.74rem;
+    }
+
+    .stat-text {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+      margin-top: 12px;
+    }
+
+    .bullet-list {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .bullet-list li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .bullet-list li::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 9px;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 16px rgba(86, 213, 255, 0.4);
+      flex-shrink: 0;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(4, 14, 28, 0.5);
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(122, 194, 255, 0.08);
+      vertical-align: middle;
+    }
+
+    .data-table th {
+      color: var(--accent-3);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: rgba(13, 36, 68, 0.72);
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .value-cell {
+      min-width: 130px;
+    }
+
+    .value-track {
+      position: relative;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .value-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent));
+      box-shadow: 0 0 18px rgba(86, 213, 255, 0.28);
+    }
+
+    .value-fill.student {
+      background: linear-gradient(90deg, #2f8cff, #82b8ff);
+    }
+
+    .value-fill.faculty {
+      background: linear-gradient(90deg, #14d6ff, #86f4ff);
+    }
+
+    .value-number {
+      font-size: 0.88rem;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .comparison {
+      display: grid;
+      gap: 14px;
+    }
+
+    .comparison-row {
+      display: grid;
+      grid-template-columns: minmax(180px, 1.2fr) 1fr 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid rgba(122, 194, 255, 0.08);
+      border-radius: 18px;
+      background: rgba(4, 14, 28, 0.46);
+    }
+
+    .comparison-label {
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .comparison-metric {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(10, 25, 48, 0.7);
+      border: 1px solid rgba(122, 194, 255, 0.08);
+    }
+
+    .comparison-role {
+      color: var(--accent-3);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .comparison-value {
+      font-family: var(--heading);
+      font-size: 1.3rem;
+    }
+
+    .quote-panel {
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(17, 45, 89, 0.95), rgba(6, 16, 33, 0.92));
+    }
+
+    .quote-panel::before {
+      content: "";
+      position: absolute;
+      inset: auto auto -60px -40px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(86, 213, 255, 0.24), transparent 72%);
+    }
+
+    .quote-text {
+      position: relative;
+      font-size: 1.14rem;
+      line-height: 1.7;
+      max-width: 880px;
+    }
+
+    .quote-author {
+      margin-top: 12px;
+      color: var(--accent-3);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.78rem;
+    }
+
+    .ranking-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .rank-card {
+      padding: 14px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(122, 194, 255, 0.1);
+      background: rgba(4, 14, 28, 0.52);
+    }
+
+    .rank-name {
+      font-size: 0.86rem;
+      line-height: 1.35;
+      color: var(--muted);
+      min-height: 38px;
+    }
+
+    .rank-value {
+      margin-top: 10px;
+      font-family: var(--heading);
+      font-size: 1.14rem;
+    }
+
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .principle-card {
+      position: relative;
+      padding: 18px 18px 18px 58px;
+      border-radius: 18px;
+      border: 1px solid rgba(122, 194, 255, 0.12);
+      background: rgba(4, 14, 28, 0.56);
+      min-height: 166px;
+    }
+
+    .principle-index {
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      color: #02111f;
+      font-weight: 800;
+      font-size: 0.82rem;
+      box-shadow: 0 0 18px rgba(86, 213, 255, 0.34);
+    }
+
+    .principle-title {
+      font-size: 1.02rem;
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+
+    .principle-copy {
+      color: var(--muted);
+      line-height: 1.58;
+      font-size: 0.93rem;
+    }
+
+    .footer {
+      margin-top: 18px;
+      padding: 18px 20px 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .small {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .spacer-top {
+      margin-top: 4px;
+    }
+
+    @media (max-width: 1180px) {
+      .hero-meta,
+      .grid.four,
+      .grid.three,
+      .grid.two,
+      .principles-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .tabs {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .shell {
+        width: min(100% - 20px, 1440px);
+        margin-top: 10px;
+      }
+
+      .hero {
+        padding: 22px 18px 18px;
+        border-radius: 24px;
+      }
+
+      .hero-top {
+        flex-direction: column;
+      }
+
+      .hero-meta,
+      .grid.four,
+      .grid.three,
+      .grid.two,
+      .principles-grid,
+      .tabs {
+        grid-template-columns: 1fr;
+      }
+
+      .comparison-row {
+        grid-template-columns: 1fr;
+      }
+
+      .section-hero,
+      .panel,
+      .quote-panel {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <span class="eyebrow" id="heroEyebrow"></span>
+          <h1 class="hero-title" id="heroTitle"></h1>
+          <p class="hero-subtitle" id="heroSubtitle"></p>
+        </div>
+        <div class="lang-toggle" aria-label="Language toggle">
+          <button type="button" class="active" data-lang="en">English</button>
+          <button type="button" data-lang="es">Español</button>
+        </div>
+      </div>
+      <div class="hero-meta" id="heroMeta"></div>
+    </section>
+
+    <nav class="tabs" id="tabs"></nav>
+    <main class="content" id="content"></main>
+    <div class="footer" id="footerText"></div>
+  </div>
+
+  <script>
+    const state = { lang: "en", tab: "overview" };
+
+    const reportMeta = {
+      respondents: {
+        institutions: "2,900",
+        participants: "1.70M+",
+        analyzedStudents: "1,143,451",
+        analyzedFaculty: "133,582"
+      }
+    };
+
+    const institutionUsage = [
+      { label: { en: "TecNM units", es: "Unidades del TecNM" }, faculty: 63, students: 68 },
+      { label: { en: "Intercultural universities", es: "Universidades Interculturales" }, faculty: 44, students: 49 },
+      { label: { en: "Federal public universities", es: "Universidades Públicas Federales" }, faculty: 58, students: 54 },
+      { label: { en: "Other public HEIs", es: "Otras IES públicas" }, faculty: 54, students: 58 },
+      { label: { en: "Public support universities", es: "Universidades de Apoyo Solidario" }, faculty: 55, students: 59 },
+      { label: { en: "Polytechnic universities", es: "Universidades Politécnicas" }, faculty: 63, students: 67 },
+      { label: { en: "Technological universities", es: "Universidades Tecnológicas" }, faculty: 63, students: 67 },
+      { label: { en: "State public universities", es: "Universidades Públicas Estatales" }, faculty: 58, students: 66 },
+      { label: { en: "Private universities", es: "Universidades Particulares" }, faculty: 64, students: 65 },
+      { label: { en: "Public teacher-training schools", es: "Normales Públicas" }, faculty: 53, students: 62 }
+    ];
+
+    const generatedContent = [
+      { label: { en: "Texts", es: "Textos" }, faculty: 76, students: 79 },
+      { label: { en: "Images", es: "Imágenes" }, faculty: 52, students: 61 },
+      { label: { en: "Code", es: "Código" }, faculty: 14, students: 15 },
+      { label: { en: "Videos", es: "Videos" }, faculty: 15, students: 10 },
+      { label: { en: "Audio", es: "Audio" }, faculty: 13, students: 9 },
+      { label: { en: "None", es: "Ninguno" }, faculty: 12, students: 5 }
+    ];
+
+    const fieldTransform = [
+      { label: { en: "ICT", es: "Tecnologías de la información y la comunicación" }, faculty: 76.3, students: 69.7 },
+      { label: { en: "Arts & humanities", es: "Artes y humanidades" }, faculty: 43.3, students: 67.5 },
+      { label: { en: "Business & administration", es: "Administración y negocios" }, faculty: 65.2, students: 64.6 },
+      { label: { en: "Engineering, manufacturing & construction", es: "Ingeniería, manufactura y construcción" }, faculty: 41.7, students: 28.8 },
+      { label: { en: "Education", es: "Educación" }, faculty: 63.5, students: 45.0 },
+      { label: { en: "Natural sciences, math & statistics", es: "Ciencias naturales, matemáticas y estadística" }, faculty: 36.2, students: 61.4 },
+      { label: { en: "Social sciences & law", es: "Ciencias sociales y derecho" }, faculty: 34.5, students: 61.3 },
+      { label: { en: "Health sciences", es: "Ciencias de la salud" }, faculty: 43.1, students: 60.6 },
+      { label: { en: "Services", es: "Servicios" }, faculty: 36.2, students: 60.2 },
+      { label: { en: "Other", es: "Otra" }, faculty: 28.6, students: 54.8 },
+      { label: { en: "Agronomy & veterinary science", es: "Agronomía y veterinaria" }, faculty: 26.3, students: 53.9 }
+    ];
+
+    const teacherTrainingByInstitution = [
+      { label: { en: "Private universities", es: "Universidades Particulares" }, value: 51 },
+      { label: { en: "Public teacher-training schools", es: "Normales Públicas" }, value: 50 },
+      { label: { en: "Federal public institutions", es: "Federales" }, value: 49 },
+      { label: { en: "Other public HEIs", es: "Otras Públicas" }, value: 45 },
+      { label: { en: "Technological & polytechnic universities", es: "Universidades Tecnológicas y Politécnicas" }, value: 44 },
+      { label: { en: "Intercultural universities", es: "Universidades Interculturales" }, value: 41 },
+      { label: { en: "State public universities", es: "Universidades Públicas Estatales" }, value: 39 },
+      { label: { en: "TecNM units", es: "Unidades del TecNM" }, value: 33 },
+      { label: { en: "Public support universities", es: "Universidades de Apoyo Solidario" }, value: 25 }
+    ];
+
+    const trustLevels = [
+      { label: { en: "Fully trust", es: "Confía plenamente" }, value: 8.2 },
+      { label: { en: "Trust a lot, but review answers", es: "Confía mucho, pero revisa respuestas" }, value: 25.0 },
+      { label: { en: "Trust somewhat and always review", es: "Confía algo y siempre revisa respuestas" }, value: 48.2 },
+      { label: { en: "Trust little; use cautiously", es: "Confía poco; usa con cautela" }, value: 13.3 },
+      { label: { en: "Do not trust", es: "No confía" }, value: 1.5 },
+      { label: { en: "Do not know", es: "No sabe" }, value: 3.8 }
+    ];
+
+    const normsByInstitution = [
+      { label: { en: "Private universities", es: "Universidades Particulares" }, value: 32.8 },
+      { label: { en: "Public teacher-training schools", es: "Normales Públicas" }, value: 25.1 },
+      { label: { en: "Federal public institutions", es: "Federales" }, value: 24.6 },
+      { label: { en: "Other public HEIs", es: "Otras Públicas" }, value: 24.0 },
+      { label: { en: "Technological & polytechnic universities", es: "Universidades Tecnológicas y Politécnicas" }, value: 23.3 },
+      { label: { en: "Intercultural universities", es: "Universidades Interculturales" }, value: 23.1 },
+      { label: { en: "State public universities", es: "Universidades Públicas Estatales" }, value: 20.4 },
+      { label: { en: "TecNM units", es: "Unidades del TecNM" }, value: 19.4 },
+      { label: { en: "Public support universities", es: "Universidades Públicas de Apoyo Solidario" }, value: 16.7 }
+    ];
+
+    const misinformationConcernStates = [
+      ["Colima", 44.09], ["CDMX", 41.54], ["Jalisco", 40.45], ["Baja California", 39.08],
+      ["Querétaro", 37.9], ["Yucatán", 37.76], ["Nuevo León", 37.51], ["Aguascalientes", 36.89],
+      ["Quintana Roo", 36.08], ["Baja California Sur", 35.9], ["Chihuahua", 35.36], ["Guanajuato", 34.8],
+      ["San Luis Potosí", 34.66], ["Nayarit", 33.59], ["Morelos", 32.65], ["Michoacán", 32.58],
+      ["Durango", 32.56], ["Oaxaca", 32.44], ["Tlaxcala", 32.42], ["Tamaulipas", 32.15],
+      ["Sonora", 31.87], ["Coahuila", 31.3], ["Sinaloa", 30.02], ["Zacatecas", 29.68],
+      ["Puebla", 28.92], ["Estado de México", 28.55], ["Campeche", 28.23], ["Veracruz", 28.23],
+      ["Guerrero", 28.14], ["Chiapas", 26.61], ["Tabasco", 26.61], ["Hidalgo", 26.39]
+    ].map(([name, value]) => ({ label: { en: name, es: name }, value }));
+
+    const principles = [
+      {
+        title: {
+          en: "Recognize that AI is already present in higher education",
+          es: "Reconocer que la IA ya está presente en la educación superior"
+        },
+        copy: {
+          en: "Policy should start from reality: AI is no longer experimental. Restrictive responses push use into invisibility instead of improving it.",
+          es: "La política debe partir de la realidad: la IA ya no es experimental. Las respuestas restrictivas empujan su uso a la informalidad en lugar de mejorarlo."
+        }
+      },
+      {
+        title: {
+          en: "Set clear institutional guidelines",
+          es: "Establecer lineamientos institucionales claros"
+        },
+        copy: {
+          en: "Universities need explicit rules for ethical, critical and purposeful use so students and faculty do not navigate AI in a policy vacuum.",
+          es: "Las universidades necesitan reglas explícitas para un uso ético, crítico y con propósito, de modo que estudiantes y docentes no operen en un vacío normativo."
+        }
+      },
+      {
+        title: {
+          en: "Make teacher training and AI literacy national priorities",
+          es: "Volver prioridad nacional la formación docente y la literacidad en IA"
+        },
+        copy: {
+          en: "Faculty development is not optional enrichment; it directly shapes quality, equity and pedagogical relevance in higher education.",
+          es: "La formación docente no es un complemento opcional; define directamente la calidad, la equidad y la pertinencia pedagógica en la educación superior."
+        }
+      },
+      {
+        title: {
+          en: "Transform curricula for the AI era",
+          es: "Transformar los planes y programas para la era de la IA"
+        },
+        copy: {
+          en: "AI should be treated both as an object of study and as a pedagogical tool that enriches learning across disciplines.",
+          es: "La IA debe tratarse tanto como objeto de estudio como herramienta pedagógica que enriquece el aprendizaje en todas las disciplinas."
+        }
+      },
+      {
+        title: {
+          en: "Rethink academic assessment models",
+          es: "Repensar los modelos de evaluación académica"
+        },
+        copy: {
+          en: "If students already use AI to create text, images and code, assessment must move from checking products toward demonstrating judgment, argumentation and problem solving.",
+          es: "Si el estudiantado ya usa IA para producir textos, imágenes y código, la evaluación debe moverse de verificar productos a demostrar juicio, argumentación y resolución de problemas."
+        }
+      },
+      {
+        title: {
+          en: "Guarantee AI literacy for students",
+          es: "Garantizar la literacidad en IA para el estudiantado"
+        },
+        copy: {
+          en: "AI literacy is not discipline-specific anymore; it should become a foundational competence across the whole system.",
+          es: "La literacidad en IA ya no es exclusiva de ciertas disciplinas; debe convertirse en una competencia básica para todo el sistema."
+        }
+      },
+      {
+        title: {
+          en: "Build collaboration to reduce access and governance gaps",
+          es: "Construir colaboración para reducir brechas de acceso y gobernanza"
+        },
+        copy: {
+          en: "Networks, shared practices and inter-institutional collaboration are essential if AI adoption is not to deepen existing inequalities.",
+          es: "Las redes, el intercambio de prácticas y la colaboración interinstitucional son esenciales para que la adopción de IA no amplifique desigualdades existentes."
+        }
+      },
+      {
+        title: {
+          en: "Include a gender perspective in AI education policy",
+          es: "Incorporar la perspectiva de género en la política educativa sobre IA"
+        },
+        copy: {
+          en: "Gender shapes adoption patterns, needs and risks. Educational policy should diagnose and respond to those differences directly.",
+          es: "El género influye en los patrones de adopción, necesidades y riesgos. La política educativa debe diagnosticar y responder a esas diferencias de forma directa."
+        }
+      },
+      {
+        title: {
+          en: "Address student well-being in the AI era",
+          es: "Atender el bienestar estudiantil en la era de la IA"
+        },
+        copy: {
+          en: "AI can serve as a complementary support channel, but it cannot replace human or institutional mental-health accompaniment.",
+          es: "La IA puede servir como canal complementario de apoyo, pero no puede sustituir el acompañamiento humano o institucional en salud mental."
+        }
+      },
+      {
+        title: {
+          en: "Strengthen humanities and social sciences",
+          es: "Fortalecer las humanidades y las ciencias sociales"
+        },
+        copy: {
+          en: "A meaningful AI agenda needs ethical judgment, social reflection and civic reasoning alongside technical capability.",
+          es: "Una agenda de IA con sentido necesita juicio ético, reflexión social y razonamiento cívico junto con la capacidad técnica."
+        }
+      }
+    ];
+
+    const copy = {
+      en: {
+        hero: {
+          eyebrowHtml: 'Created by <a href="https://www.linkedin.com/in/saswatksahu/" target="_blank" rel="noreferrer">Saswat Sahu</a>',
+          title: "ENIAG 2025 | Generative AI in Mexican Higher Education",
+          subtitle: "Comprehensive bi-lingual dashboard to understand the Artificial Intelligence usage landscape in Mexico for Higher education."
+        },
+        heroCards: [
+          {
+            label: "Source",
+            value: "ENIAG 2025",
+            note: "National survey promoted by Mexico’s Secretariat of Public Education through the Undersecretariat of Higher Education."
+          },
+          {
+            label: "Participation",
+            value: reportMeta.respondents.participants,
+            note: "2,900 institutions, 1,539,732 students and 163,259 faculty members participated."
+          },
+          {
+            label: "Analyzed Sample",
+            value: reportMeta.respondents.analyzedStudents,
+            note: "Final analysis used 1,143,451 student responses and 133,582 faculty responses after validation filters."
+          },
+          {
+            label: "Core Thesis",
+            value: "AI is already here",
+            note: "The report argues the challenge is no longer whether AI belongs in higher education, but how to govern and use it critically."
+          }
+        ],
+        tabs: {
+          overview: { label: "Overview" },
+          importance: { label: "How It Matters" },
+          methodology: { label: "Methodology" },
+          adoption: { label: "Adoption" },
+          learning: { label: "Learning" },
+          transformation: { label: "Transformation" },
+          risks: { label: "Risks & Governance" },
+          beyond: { label: "Beyond Academics" },
+          agenda: { label: "Action Agenda" }
+        },
+        labels: {
+          faculty: "Faculty",
+          students: "Students",
+          average: "National average",
+          keyThemes: "Key themes",
+          sourceNote: "Source: ENIAG 2025 PDF provided by the user. Percentages and structural themes were extracted from the report and reorganized into this dashboard.",
+          caveatPrivate: "Note: In private and federal HEIs, participation represented 5% of total enrollment in those categories when noted by the report.",
+          dailyUseNote: "Daily use is defined in the report as using generative AI at least once per week."
+        },
+        sections: {
+          overview: {
+            kicker: "Report overview",
+            title: "A national picture of generative AI is finally visible",
+            intro: "The report frames generative AI as a structural transformation in how knowledge is produced, how people communicate and how academic work is organized. Mexico’s higher education system is positioned as one of the main arenas where this shift is already unfolding.",
+            chips: ["National survey", "Higher education", "Generative AI", "Bilingual dashboard", "Decision-ready synthesis"],
+            quote: "It is not generative AI itself that weakens critical thinking or effort. What can impoverish or limit human potential is the way education chooses to use it.",
+            quoteAuthor: "Framing quote from the report",
+            bulletsTitle: "What the opening pages establish",
+            bullets: [
+              "Generative AI is presented as a rapid civilizational shift rather than a marginal digital tool.",
+              "Higher education in Mexico is already being reshaped in teaching, learning, assessment and research.",
+              "The survey was launched in October 2025 to build the first national evidence base on this topic.",
+              "The report asks institutions to move from abstraction and anxiety toward evidence, governance and action."
+            ]
+          },
+          importance: {
+            kicker: "How it matters",
+            title: "The report matters because Mexico needed its own evidence",
+            intro: "Before ENIAG 2025, discussions about AI in Mexican higher education often depended on studies from other countries and institutional settings. The report positions itself as a first large-scale corrective to that gap."
+          },
+          methodology: {
+            kicker: "Study design and participating institutions",
+            title: "A census-style design aimed at system-wide visibility",
+            intro: "The study used a census-oriented, non-probabilistic approach by inviting the full higher education ecosystem. The report emphasizes volume, institutional diversity and broad subsystem coverage as the basis for identifying system-level trends."
+          },
+          adoption: {
+            kicker: "Main findings",
+            title: "Generative AI already belongs to everyday university life",
+            intro: "Awareness is almost universal and frequent use is already normalized. The main challenge described by the report is not adoption itself, but ensuring that adoption does not damage learning or widen existing inequalities."
+          },
+          learning: {
+            kicker: "Learning and academic performance",
+            title: "AI is already being used inside learning processes",
+            intro: "Students and faculty are not using generative AI only for convenience. The report shows that it is embedded in content creation, complex cognitive tasks and self-reported academic performance."
+          },
+          transformation: {
+            kicker: "Career transformation and training needs",
+            title: "Transformation is perceived broadly, but preparedness is uneven",
+            intro: "The report shows a widespread perception that AI will transform disciplines and careers. At the same time, both students and faculty point to an urgent need for structured training and institutional support."
+          },
+          risks: {
+            kicker: "Concerns, trust, competence and regulation",
+            title: "Use is widespread, but governance, confidence and norms lag behind",
+            intro: "The report clusters several vulnerabilities together: misinformation, uneven trust, modest self-rated competence and weak institutional rule visibility. Adoption has moved faster than regulation."
+          },
+          beyond: {
+            kicker: "Uses beyond academics",
+            title: "AI use is extending into emotional support and everyday life",
+            intro: "The document explicitly shows that generative AI is not confined to coursework. A non-trivial minority of students and faculty already use it for emotional support, motivation and self-reflection."
+          },
+          agenda: {
+            kicker: "Principles and collective action",
+            title: "The report closes with a national action agenda",
+            intro: "The final section moves from diagnosis to orientation. It proposes ten action principles for institutions, authorities and academic communities, then closes with a call for collective, ongoing governance."
+          }
+        },
+        footerHtml: 'You can read the document <a href="https://www.gob.mx/cms/uploads/attachment/file/1071411/Dossier_Resultados_ENIAG2025_SEP_.pdf" target="_blank" rel="noreferrer">here</a>.'
+      },
+      es: {
+        hero: {
+          eyebrowHtml: 'Created by <a href="https://www.linkedin.com/in/saswatksahu/" target="_blank" rel="noreferrer">Saswat Sahu</a>',
+          title: "ENIAG 2025 | IA generativa en la educación superior mexicana",
+          subtitle: "Comprehensive bi-lingual dashboard to understand the Artificial Intelligence usage landscape in Mexico for Higher education."
+        },
+        heroCards: [
+          {
+            label: "Fuente",
+            value: "ENIAG 2025",
+            note: "Encuesta nacional impulsada por la Secretaría de Educación Pública a través de la Subsecretaría de Educación Superior."
+          },
+          {
+            label: "Participación",
+            value: reportMeta.respondents.participants,
+            note: "Participaron 2,900 instituciones, 1,539,732 estudiantes y 163,259 docentes."
+          },
+          {
+            label: "Muestra analizada",
+            value: reportMeta.respondents.analyzedStudents,
+            note: "El análisis final utilizó 1,143,451 respuestas estudiantiles y 133,582 respuestas docentes después de aplicar filtros de validación."
+          },
+          {
+            label: "Tesis central",
+            value: "La IA ya está aquí",
+            note: "El informe sostiene que el reto ya no es si la IA pertenece a la educación superior, sino cómo gobernarla y usarla de forma crítica."
+          }
+        ],
+        tabs: {
+          overview: { label: "Panorama" },
+          importance: { label: "Cómo importa" },
+          methodology: { label: "Metodología" },
+          adoption: { label: "Adopción" },
+          learning: { label: "Aprendizaje" },
+          transformation: { label: "Transformación" },
+          risks: { label: "Riesgos y gobernanza" },
+          beyond: { label: "Más allá de lo académico" },
+          agenda: { label: "Agenda de acción" }
+        },
+        labels: {
+          faculty: "Docentes",
+          students: "Estudiantes",
+          average: "Promedio nacional",
+          keyThemes: "Temas clave",
+          sourceNote: "Fuente: PDF ENIAG 2025 proporcionado por el usuario. Los porcentajes y los ejes estructurales fueron extraídos del informe y reorganizados en este dashboard.",
+          caveatPrivate: "Nota: En las IES particulares y federales, cuando el informe lo indica, la participación representó el 5% de la matrícula total de esas categorías.",
+          dailyUseNote: "Uso cotidiano se define en el informe como utilizar IA generativa al menos una vez por semana."
+        },
+        sections: {
+          overview: {
+            kicker: "Panorama del informe",
+            title: "Por fin se vuelve visible una radiografía nacional de la IA generativa",
+            intro: "El informe presenta a la IA generativa como una transformación estructural en la forma de producir conocimiento, comunicarse y organizar el trabajo académico. La educación superior mexicana aparece como uno de los espacios donde ese cambio ya está ocurriendo.",
+            chips: ["Encuesta nacional", "Educación superior", "IA generativa", "Dashboard bilingüe", "Síntesis para decisiones"],
+            quote: "No es la IA generativa la que obstaculiza el pensamiento crítico o anula el esfuerzo. Lo que puede empobrecer o limitar el potencial humano es el uso que la educación haga de ella.",
+            quoteAuthor: "Cita de encuadre del informe",
+            bulletsTitle: "Lo que establecen las páginas iniciales",
+            bullets: [
+              "La IA generativa se presenta como un cambio civilizatorio acelerado, no como una herramienta digital marginal.",
+              "La educación superior en México ya está siendo reconfigurada en docencia, aprendizaje, evaluación e investigación.",
+              "La encuesta se impulsó en octubre de 2025 para construir la primera base nacional de evidencia sobre este fenómeno.",
+              "El informe pide pasar de la abstracción y la ansiedad a la evidencia, la gobernanza y la acción."
+            ]
+          },
+          importance: {
+            kicker: "Cómo importa",
+            title: "El informe importa porque México necesitaba evidencia propia",
+            intro: "Antes de la ENIAG 2025, buena parte de la conversación sobre IA en la educación superior mexicana dependía de estudios levantados en otros países y contextos institucionales. El informe se presenta como una primera corrección a gran escala de ese vacío."
+          },
+          methodology: {
+            kicker: "Diseño del estudio e instituciones participantes",
+            title: "Un diseño de tipo censal para ver al sistema completo",
+            intro: "El estudio utilizó un enfoque censal, no probabilístico, al convocar al conjunto del ecosistema de educación superior. El informe subraya el volumen, la diversidad institucional y la cobertura de subsistemas como base para identificar tendencias sistémicas."
+          },
+          adoption: {
+            kicker: "Principales hallazgos",
+            title: "La IA generativa ya forma parte de la vida cotidiana universitaria",
+            intro: "El conocimiento del término es casi universal y el uso frecuente ya está normalizado. El principal reto que plantea el informe no es la adopción en sí, sino evitar que esa adopción afecte el aprendizaje o profundice brechas ya existentes."
+          },
+          learning: {
+            kicker: "Aprendizaje y desempeño académico",
+            title: "La IA ya se usa dentro de los procesos de aprendizaje",
+            intro: "Estudiantes y docentes no usan la IA generativa solo por conveniencia. El informe muestra que ya está integrada en la producción de contenidos, en tareas cognitivas complejas y en la percepción del desempeño académico."
+          },
+          transformation: {
+            kicker: "Transformación de carreras y necesidad de formación",
+            title: "La transformación se percibe ampliamente, pero la preparación es desigual",
+            intro: "El informe muestra una percepción extendida de que la IA transformará carreras y campos de conocimiento. Al mismo tiempo, estudiantes y docentes señalan una necesidad urgente de formación estructurada y acompañamiento institucional."
+          },
+          risks: {
+            kicker: "Preocupaciones, confianza, competencia y regulación",
+            title: "El uso avanza, pero la gobernanza, la confianza y las normas se rezagan",
+            intro: "El informe agrupa varias vulnerabilidades: desinformación, confianza desigual, autopercepción modesta de competencia y baja visibilidad de reglas institucionales. La adopción ha avanzado más rápido que la regulación."
+          },
+          beyond: {
+            kicker: "Usos más allá de lo académico",
+            title: "La IA se extiende al apoyo emocional y a la vida cotidiana",
+            intro: "El documento muestra explícitamente que la IA generativa ya no se limita a las tareas escolares. Una minoría relevante de estudiantes y docentes ya la usa para apoyo emocional, motivación y reflexión personal."
+          },
+          agenda: {
+            kicker: "Principios y acción colectiva",
+            title: "El informe cierra con una agenda nacional de acción",
+            intro: "La parte final pasa del diagnóstico a la orientación. Propone diez principios de acción para instituciones, autoridades y comunidades académicas, y concluye con un llamado a una gobernanza colectiva y permanente."
+          }
+        },
+        footerHtml: 'You can read the document <a href="https://www.gob.mx/cms/uploads/attachment/file/1071411/Dossier_Resultados_ENIAG2025_SEP_.pdf" target="_blank" rel="noreferrer">here</a>.'
+      }
+    };
+
+    function t(value) {
+      if (value && typeof value === "object" && value.en && value.es) {
+        return value[state.lang];
+      }
+      return value;
+    }
+
+    function formatPercent(value) {
+      return `${Number(value).toFixed(value % 1 === 0 ? 0 : 1)}%`;
+    }
+
+    function renderHero() {
+      const lang = copy[state.lang];
+      document.getElementById("heroEyebrow").innerHTML = lang.hero.eyebrowHtml;
+      document.getElementById("heroTitle").textContent = lang.hero.title;
+      document.getElementById("heroSubtitle").textContent = lang.hero.subtitle;
+      document.getElementById("footerText").innerHTML = lang.footerHtml;
+      document.getElementById("heroMeta").innerHTML = lang.heroCards.map((item) => `
+        <article class="meta-card">
+          <div class="meta-label">${item.label}</div>
+          <div class="meta-value">${item.value}</div>
+          <div class="meta-note">${item.note}</div>
+        </article>
+      `).join("");
+    }
+
+    function renderTabs() {
+      const tabs = copy[state.lang].tabs;
+      const container = document.getElementById("tabs");
+      container.innerHTML = Object.entries(tabs).map(([id, tab]) => `
+        <button type="button" class="tab-btn ${state.tab === id ? "active" : ""}" data-tab="${id}">
+          <span class="tab-title">${tab.label}</span>
+        </button>
+      `).join("");
+      container.querySelectorAll("[data-tab]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.tab = btn.dataset.tab;
+          renderApp();
+        });
+      });
+    }
+
+    function statCards(items) {
+      return `
+        <div class="stat-grid">
+          ${items.map((item) => `
+            <article class="stat-card">
+              <div class="stat-label">${item.label}</div>
+              <div class="stat-value">${item.value}</div>
+              <div class="stat-text">${item.text}</div>
+            </article>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function comparisonTable(title, subtitle, rows, footnote = "") {
+      const labels = copy[state.lang].labels;
+      return `
+        <section class="panel">
+          <h3 class="panel-title">${title}</h3>
+          <div class="panel-subtitle">${subtitle}</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>${labels.keyThemes}</th>
+                <th>${labels.faculty}</th>
+                <th>${labels.students}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map((row) => `
+                <tr>
+                  <td>${t(row.label)}</td>
+                  <td class="value-cell">
+                    <div class="value-track"><div class="value-fill faculty" style="width:${row.faculty}%"></div></div>
+                    <div class="value-number">${formatPercent(row.faculty)}</div>
+                  </td>
+                  <td class="value-cell">
+                    <div class="value-track"><div class="value-fill student" style="width:${row.students}%"></div></div>
+                    <div class="value-number">${formatPercent(row.students)}</div>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+          ${footnote ? `<div class="note">${footnote}</div>` : ""}
+        </section>
+      `;
+    }
+
+    function singleValueTable(title, subtitle, rows, unit = "%", footnote = "") {
+      return `
+        <section class="panel">
+          <h3 class="panel-title">${title}</h3>
+          <div class="panel-subtitle">${subtitle}</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>${copy[state.lang].labels.keyThemes}</th>
+                <th>${unit === "%" ? "Value" : unit}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map((row) => `
+                <tr>
+                  <td>${t(row.label)}</td>
+                  <td class="value-cell">
+                    <div class="value-track"><div class="value-fill faculty" style="width:${Math.min(row.value, 100)}%"></div></div>
+                    <div class="value-number">${unit === "%" ? formatPercent(row.value) : `${row.value}${unit}`}</div>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+          ${footnote ? `<div class="note">${footnote}</div>` : ""}
+        </section>
+      `;
+    }
+
+    function rankingGrid(title, subtitle, items) {
+      return `
+        <section class="panel">
+          <h3 class="panel-title">${title}</h3>
+          <div class="panel-subtitle">${subtitle}</div>
+          <div class="ranking-grid">
+            ${items.map((item) => `
+              <article class="rank-card">
+                <div class="rank-name">${t(item.label)}</div>
+                <div class="rank-value">${formatPercent(item.value)}</div>
+              </article>
+            `).join("")}
+          </div>
+        </section>
+      `;
+    }
+
+    function sectionHero(data) {
+      return `
+        <section class="section-hero">
+          <div class="section-kicker">${data.kicker}</div>
+          <h2 class="section-title">${data.title}</h2>
+          <p class="section-intro">${data.intro}</p>
+          ${(data.chips && data.chips.length) ? `
+            <div class="chips">
+              ${data.chips.map((chip) => `<span class="chip">${chip}</span>`).join("")}
+            </div>
+          ` : ""}
+        </section>
+      `;
+    }
+
+    function renderOverview() {
+      const lang = copy[state.lang];
+      const section = lang.sections.overview;
+      return `
+        ${sectionHero(section)}
+        <div class="grid two">
+          <section class="quote-panel">
+            <div class="quote-text">${section.quote}</div>
+            <div class="quote-author">${section.quoteAuthor}</div>
+          </section>
+          <section class="panel">
+            <h3 class="panel-title">${section.bulletsTitle}</h3>
+            <ul class="bullet-list">
+              ${section.bullets.map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+          </section>
+        </div>
+        <section class="panel">
+          <h3 class="panel-title">${state.lang === "en" ? "Core report metrics" : "Métricas centrales del informe"}</h3>
+          <div class="panel-subtitle">${state.lang === "en"
+            ? "These headline numbers define the scale of the survey and explain why the document treats its findings as a serious national signal."
+            : "Estas cifras resumen la escala de la encuesta y explican por qué el documento trata sus hallazgos como una señal nacional de peso."}</div>
+          ${statCards([
+            {
+              label: state.lang === "en" ? "Institutions" : "Instituciones",
+              value: "2,900",
+              text: state.lang === "en" ? "Higher education institutions participated across subsystems." : "Participaron instituciones de educación superior de múltiples subsistemas."
+            },
+            {
+              label: state.lang === "en" ? "Student participants" : "Participación estudiantil",
+              value: "1,539,732",
+              text: state.lang === "en" ? "Student participation shows the scale of adoption and concern." : "La participación estudiantil muestra la escala de adopción y preocupación."
+            },
+            {
+              label: state.lang === "en" ? "Faculty participants" : "Participación docente",
+              value: "163,259",
+              text: state.lang === "en" ? "Faculty responses ground the report in teaching practice." : "Las respuestas docentes anclan el informe en la práctica educativa."
+            },
+            {
+              label: state.lang === "en" ? "Validated analysis" : "Análisis validado",
+              value: "1.28M+",
+              text: state.lang === "en" ? "Final analysis retained validated student and faculty responses only." : "El análisis final conservó solo respuestas validadas de estudiantes y docentes."
+            }
+          ])}
+        </section>
+      `;
+    }
+
+    function renderImportance() {
+      const section = copy[state.lang].sections.importance;
+      return `
+        ${sectionHero(section)}
+        <div class="grid four">
+          ${[
+            {
+              title: state.lang === "en" ? "First exercise at this scale in Mexico" : "Primer ejercicio de esta escala en México",
+              text: state.lang === "en"
+                ? "The report stresses that no previous national exercise had mapped uses and perceptions of generative AI in higher education at this scale."
+                : "El informe subraya que antes no existía un ejercicio nacional de esta escala para mapear usos y percepciones de la IA generativa en educación superior."
+            },
+            {
+              title: state.lang === "en" ? "Moves beyond imported comparisons" : "Permite salir de comparaciones importadas",
+              text: state.lang === "en"
+                ? "Debate no longer has to rely mainly on surveys from other countries and institutional contexts."
+                : "La conversación ya no tiene que depender principalmente de encuestas realizadas en otros países y contextos institucionales."
+            },
+            {
+              title: state.lang === "en" ? "Builds evidence from the Mexican context" : "Construye evidencia desde el contexto mexicano",
+              text: state.lang === "en"
+                ? "This matters because adoption patterns, inequalities and governance gaps are context-specific."
+                : "Esto importa porque los patrones de adopción, las desigualdades y los vacíos de gobernanza son específicos del contexto."
+            },
+            {
+              title: state.lang === "en" ? "Replaces indirect readings with direct evidence" : "Sustituye aproximaciones indirectas por evidencia directa",
+              text: state.lang === "en"
+                ? "The report presents itself as a starting point for understanding the phenomenon through local data rather than inference."
+                : "El informe se plantea como un punto de partida para entender el fenómeno a partir de datos locales y no solo por inferencia."
+            }
+          ].map((card) => `
+            <section class="panel">
+              <h3 class="panel-title">${card.title}</h3>
+              <div class="panel-subtitle">${card.text}</div>
+            </section>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderMethodology() {
+      const section = copy[state.lang].sections.methodology;
+      return `
+        ${sectionHero(section)}
+        <div class="grid two">
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Methodological considerations" : "Consideraciones metodológicas"}</h3>
+            <ul class="bullet-list">
+              <li>${state.lang === "en"
+                ? "Census-style, non-probabilistic design: the survey invited the whole higher education ecosystem rather than drawing a probabilistic sample."
+                : "Diseño de tipo censal, no probabilístico: la encuesta convocó al conjunto del ecosistema de educación superior en lugar de usar una muestra probabilística."}</li>
+              <li>${state.lang === "en"
+                ? "The report uses valid responses filtered by completion time and response consistency criteria."
+                : "El informe trabaja con respuestas válidas filtradas por tiempo de finalización y criterios de consistencia."}</li>
+              <li>${state.lang === "en"
+                ? "Its analytical strength comes from volume, coverage and institutional diversity rather than from inferential representativeness."
+                : "Su fortaleza analítica proviene del volumen, la cobertura y la diversidad institucional, más que de la representatividad inferencial."}</li>
+              <li>${state.lang === "en"
+                ? "The report explicitly treats the results as a robust basis for identifying trends across subsystems."
+                : "El informe trata explícitamente los resultados como una base robusta para identificar tendencias entre subsistemas."}</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Institution types included" : "Tipos de instituciones incluidas"}</h3>
+            <ul class="bullet-list">
+              ${[
+                state.lang === "en" ? "Federal public universities" : "Universidades Públicas Federales",
+                state.lang === "en" ? "State public universities" : "Universidades Públicas Estatales",
+                "Tecnológico Nacional de México (TecNM)",
+                state.lang === "en" ? "Technological and polytechnic universities" : "Universidades Tecnológicas y Politécnicas",
+                state.lang === "en" ? "Private universities" : "Universidades Particulares",
+                state.lang === "en" ? "Intercultural universities" : "Universidades Interculturales",
+                state.lang === "en" ? "Teacher-training schools" : "Escuelas Normales"
+              ].map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+          </section>
+        </div>
+        <section class="panel">
+          <h3 class="panel-title">${state.lang === "en" ? "Participation and validated analysis" : "Participación y análisis validado"}</h3>
+          ${statCards([
+            {
+              label: state.lang === "en" ? "Participating institutions" : "Instituciones participantes",
+              value: "2,900",
+              text: state.lang === "en" ? "The study covered institutions across the National Higher Education System." : "El estudio cubrió instituciones de todo el Sistema Nacional de Educación Superior."
+            },
+            {
+              label: state.lang === "en" ? "Participating students" : "Estudiantes participantes",
+              value: "1,539,732",
+              text: state.lang === "en" ? "Mass participation gives the report unusual scale." : "La participación masiva le da al informe una escala poco común."
+            },
+            {
+              label: state.lang === "en" ? "Participating faculty" : "Docentes participantes",
+              value: "163,259",
+              text: state.lang === "en" ? "Faculty input is central to the report’s interpretation of pedagogical change." : "La voz docente es central para interpretar el cambio pedagógico."
+            },
+            {
+              label: state.lang === "en" ? "Final analyzed sample" : "Muestra final analizada",
+              value: "1,277,033",
+              text: state.lang === "en" ? "1,143,451 students plus 133,582 faculty after filters." : "1,143,451 estudiantes más 133,582 docentes después de aplicar filtros."
+            }
+          ])}
+        </section>
+      `;
+    }
+
+    function renderAdoption() {
+      const labels = copy[state.lang].labels;
+      const section = copy[state.lang].sections.adoption;
+      return `
+        ${sectionHero(section)}
+        <div class="grid three">
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Awareness of the term" : "Conocimiento del término"}</h3>
+            ${statCards([
+              {
+                label: labels.faculty,
+                value: "95%",
+                text: state.lang === "en" ? "Faculty who say they know the term generative AI." : "Docentes que dicen conocer el término IA generativa."
+              },
+              {
+                label: labels.students,
+                value: "93%",
+                text: state.lang === "en" ? "Students who say they know the term generative AI." : "Estudiantes que dicen conocer el término IA generativa."
+              }
+            ])}
+          </section>
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Frequency of use" : "Frecuencia de uso"}</h3>
+            <div class="comparison">
+              ${[
+                { label: state.lang === "en" ? "Daily use" : "Uso cotidiano", faculty: 60, students: 66 },
+                { label: state.lang === "en" ? "A few times per month" : "Algunas veces al mes", faculty: 25, students: 26 },
+                { label: state.lang === "en" ? "A few times per year" : "Algunas veces al año", faculty: 8, students: 5 },
+                { label: state.lang === "en" ? "Never" : "Nunca", faculty: 7, students: 3 }
+              ].map((row) => `
+                <div class="comparison-row">
+                  <div class="comparison-label">${row.label}</div>
+                  <div class="comparison-metric">
+                    <div class="comparison-role">${labels.faculty}</div>
+                    <div class="comparison-value">${formatPercent(row.faculty)}</div>
+                  </div>
+                  <div class="comparison-metric">
+                    <div class="comparison-role">${labels.students}</div>
+                    <div class="comparison-value">${formatPercent(row.students)}</div>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+            <div class="note">${labels.dailyUseNote}</div>
+          </section>
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Daily use by gender" : "Uso cotidiano por género"}</h3>
+            ${statCards([
+              {
+                label: state.lang === "en" ? "Women" : "Mujeres",
+                value: "69.7%",
+                text: state.lang === "en" ? "The report shows higher daily-use intensity among women in this indicator." : "El informe muestra mayor intensidad de uso cotidiano entre mujeres en este indicador."
+              },
+              {
+                label: state.lang === "en" ? "Men" : "Hombres",
+                value: "62.7%",
+                text: state.lang === "en" ? "Gender patterns matter because later sections connect AI adoption to policy and support differences." : "Los patrones de género importan porque más adelante el informe vincula la adopción con diferencias de política y apoyo."
+              }
+            ])}
+          </section>
+        </div>
+        ${comparisonTable(
+          state.lang === "en" ? "Daily use by institution type" : "Uso cotidiano por tipo de institución",
+          state.lang === "en"
+            ? "The report warns that the central question is not whether AI is being used, but how to integrate it without weakening learning or deepening inequities."
+            : "El informe advierte que la pregunta central no es si la IA se usa o no, sino cómo integrarla sin afectar el aprendizaje ni profundizar inequidades.",
+          institutionUsage,
+          copy[state.lang].labels.caveatPrivate
+        )}
+      `;
+    }
+
+    function renderLearning() {
+      const section = copy[state.lang].sections.learning;
+      return `
+        ${sectionHero(section)}
+        ${comparisonTable(
+          state.lang === "en" ? "Content generated with AI in the last 3 months" : "Contenido generado con IA en los últimos 3 meses",
+          state.lang === "en"
+            ? "Text remains dominant, but images, code, video and audio are also present. The report asks whether text is still the best sole reference for evaluating learning."
+            : "El texto sigue siendo dominante, pero también aparecen imágenes, código, video y audio. El informe pregunta si el texto sigue siendo el mejor referente único para evaluar el aprendizaje.",
+          generatedContent
+        )}
+        <div class="grid three">
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Usefulness for complex tasks" : "Utilidad para tareas complejas"}</h3>
+            ${statCards([
+              {
+                label: copy[state.lang].labels.faculty,
+                value: "78.7%",
+                text: state.lang === "en" ? "Faculty who say AI is useful to analyze, reason, reflect, create and imagine." : "Docentes que consideran útil la IA para analizar, razonar, reflexionar, crear e imaginar."
+              },
+              {
+                label: copy[state.lang].labels.students,
+                value: "82.3%",
+                text: state.lang === "en" ? "Students also see AI as a complement for complex cognitive work." : "El estudiantado también percibe a la IA como recurso complementario para tareas cognitivas complejas."
+              }
+            ])}
+          </section>
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Self-reported academic improvement" : "Mejora académica autopercibida"}</h3>
+            ${statCards([
+              {
+                label: copy[state.lang].labels.faculty,
+                value: "73%",
+                text: state.lang === "en" ? "Faculty report improved academic performance after using AI." : "Docentes reportan mejora en su desempeño académico tras usar IA."
+              },
+              {
+                label: copy[state.lang].labels.students,
+                value: "69%",
+                text: state.lang === "en" ? "Students also report improvement, while minorities report no change or decline." : "Estudiantes también reportan mejora, mientras que minorías reportan no cambio o empeoramiento."
+              }
+            ])}
+          </section>
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Interpretive signal" : "Señal interpretativa"}</h3>
+            <ul class="bullet-list">
+              <li>${state.lang === "en"
+                ? "The report treats AI as more than a technical shortcut: it is already intervening in cognition and pedagogy."
+                : "El informe trata a la IA como algo más que un atajo técnico: ya interviene en la cognición y en la pedagogía."}</li>
+              <li>${state.lang === "en"
+                ? "That shift implies new debates about how universities define evidence of learning."
+                : "Ese cambio implica nuevos debates sobre cómo las universidades definen la evidencia del aprendizaje."}</li>
+              <li>${state.lang === "en"
+                ? "The question is not only what students submit, but what competencies institutions should now evaluate."
+                : "La pregunta ya no es solo qué entregan las y los estudiantes, sino qué competencias deben evaluarse ahora."}</li>
+            </ul>
+          </section>
+        </div>
+      `;
+    }
+
+    function renderTransformation() {
+      const section = copy[state.lang].sections.transformation;
+      return `
+        ${sectionHero(section)}
+        <div class="grid three">
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Students expecting field transformation" : "Estudiantes que esperan transformación de su área"}</h3>
+            ${statCards([
+              {
+                label: state.lang === "en" ? "Some or a lot" : "Algo o mucho",
+                value: "80.5%",
+                text: state.lang === "en" ? "41.4% say ‘a lot’ and 39.1% say ‘somewhat’." : "41.4% dice ‘mucho’ y 39.1% dice ‘algo’."
+              },
+              {
+                label: state.lang === "en" ? "Nothing" : "Nada",
+                value: "5.2%",
+                text: state.lang === "en" ? "Only a small minority sees no transformation ahead." : "Solo una minoría pequeña no ve transformación."
+              },
+              {
+                label: state.lang === "en" ? "Do not know" : "No sabe",
+                value: "14.4%",
+                text: state.lang === "en" ? "Uncertainty remains a relevant share of the student response." : "La incertidumbre sigue siendo una parte relevante de la respuesta estudiantil."
+              }
+            ])}
+          </section>
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Need for AI-related courses" : "Necesidad de cursos vinculados con IA"}</h3>
+            ${statCards([
+              {
+                label: copy[state.lang].labels.faculty,
+                value: "91%",
+                text: state.lang === "en" ? "Faculty in public HEIs who say AI-related training is needed." : "Docentes de IES públicas que consideran necesaria la formación vinculada a IA."
+              },
+              {
+                label: copy[state.lang].labels.students,
+                value: "76.2%",
+                text: state.lang === "en" ? "Students also register strong demand for structured AI learning opportunities." : "El estudiantado también muestra una fuerte demanda de formación estructurada en IA."
+              }
+            ])}
+          </section>
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "System signal" : "Señal del sistema"}</h3>
+            <ul class="bullet-list">
+              <li>${state.lang === "en"
+                ? "AI is perceived as transformative well beyond STEM and digital majors."
+                : "La IA se percibe como transformadora mucho más allá de STEM y de las carreras digitales."}</li>
+              <li>${state.lang === "en"
+                ? "At the same time, teacher training is still uneven across institution types."
+                : "Al mismo tiempo, la formación docente sigue siendo desigual entre tipos de institución."}</li>
+              <li>${state.lang === "en"
+                ? "The report uses this mismatch to justify a national training agenda."
+                : "El informe usa este desajuste para justificar una agenda nacional de formación."}</li>
+            </ul>
+          </section>
+        </div>
+        ${comparisonTable(
+          state.lang === "en" ? "Perceived transformation by field of study" : "Percepción de transformación por área de conocimiento",
+          state.lang === "en"
+            ? "Highest intensity appears in ICT, but the report insists that the shift extends across all major knowledge areas."
+            : "La mayor intensidad aparece en TIC, pero el informe insiste en que el cambio se extiende a todas las grandes áreas del conocimiento.",
+          fieldTransform
+        )}
+        ${singleValueTable(
+          state.lang === "en" ? "Faculty already trained in AI by institution type" : "Docentes que ya tomaron cursos de IA por tipo de institución",
+          state.lang === "en"
+            ? "Training is progressing, but with visible institutional differences."
+            : "La capacitación avanza, pero con diferencias institucionales claramente visibles.",
+          teacherTrainingByInstitution,
+          "%",
+          copy[state.lang].labels.caveatPrivate
+        )}
+      `;
+    }
+
+    function renderRisks() {
+      const section = copy[state.lang].sections.risks;
+      return `
+        ${sectionHero(section)}
+        <section class="quote-panel">
+          <div class="quote-text">${state.lang === "en"
+            ? "AI does not merely replicate human biases; it can also grant them a false aura of scientific objectivity."
+            : "La IA no solo replica sesgos humanos; también puede otorgarles una falsa apariencia de objetividad científica."}</div>
+          <div class="quote-author">Michael Sandel</div>
+        </section>
+        <div class="grid two">
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Misinformation concern" : "Preocupación por desinformación"}</h3>
+            ${statCards([
+              {
+                label: copy[state.lang].labels.average,
+                value: "33.2%",
+                text: state.lang === "en" ? "About one in three students expresses concern about false information generated by AI." : "Aproximadamente uno de cada tres estudiantes expresa preocupación por información falsa generada por IA."
+              },
+              {
+                label: state.lang === "en" ? "Highest observed" : "Valor más alto",
+                value: "44.09%",
+                text: state.lang === "en" ? "Colima records the highest share in the state ranking shown in the report." : "Colima registra la proporción más alta en el ranking estatal mostrado por el informe."
+              },
+              {
+                label: state.lang === "en" ? "Lowest observed" : "Valor más bajo",
+                value: "26.39%",
+                text: state.lang === "en" ? "Hidalgo is the lowest state in the ranking reproduced here." : "Hidalgo aparece como la entidad con menor valor en el ranking reproducido aquí."
+              }
+            ])}
+          </section>
+          ${singleValueTable(
+            state.lang === "en" ? "How much students trust AI outputs" : "Qué tanto confían los estudiantes en las respuestas de la IA",
+            state.lang === "en"
+              ? "Most students say they use AI cautiously and verify its outputs rather than accepting them automatically."
+              : "La mayoría del estudiantado afirma usar la IA con cautela y verificar sus respuestas en lugar de aceptarlas automáticamente.",
+            trustLevels,
+            "%"
+          )}
+        </div>
+        ${rankingGrid(
+          state.lang === "en" ? "State ranking: concern about false information generated by AI" : "Ranking estatal: preocupación por información falsa generada por IA",
+          state.lang === "en"
+            ? "The report highlights territorial variation in how students perceive misinformation risk."
+            : "El informe subraya que el riesgo percibido de desinformación varía territorialmente.",
+          misinformationConcernStates
+        )}
+        <div class="grid two">
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Self-rated competence is still modest" : "La competencia autopercibida sigue siendo modesta"}</h3>
+            ${statCards([
+              {
+                label: state.lang === "en" ? "Observed range" : "Rango observado",
+                value: "4.4-5.5 / 10",
+                text: state.lang === "en" ? "Across institution types, no group exceeds 5.5 out of 10 in self-rated AI knowledge and use." : "Entre tipos de institución, ningún grupo supera 5.5 sobre 10 en conocimiento y uso autopercibido de IA."
+              },
+              {
+                label: state.lang === "en" ? "Headline interpretation" : "Lectura central",
+                value: "No advanced mastery",
+                text: state.lang === "en" ? "The report says use is widespread, but sophisticated mastery is not." : "El informe sostiene que el uso es amplio, pero el dominio sofisticado todavía no existe."
+              }
+            ])}
+          </section>
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Institutional policy gap" : "Brecha de normas institucionales"}</h3>
+            <div class="comparison">
+              ${[
+                {
+                  label: state.lang === "en" ? "Public HEIs: do not know the rules" : "IES públicas: no conocen las normas",
+                  faculty: 76.7,
+                  students: 67.2
+                },
+                {
+                  label: state.lang === "en" ? "Private HEIs: do not know the rules" : "IES particulares: no conocen las normas",
+                  faculty: 75.3,
+                  students: 61.1
+                }
+              ].map((row) => `
+                <div class="comparison-row">
+                  <div class="comparison-label">${row.label}</div>
+                  <div class="comparison-metric">
+                    <div class="comparison-role">${copy[state.lang].labels.faculty}</div>
+                    <div class="comparison-value">${formatPercent(row.faculty)}</div>
+                  </div>
+                  <div class="comparison-metric">
+                    <div class="comparison-role">${copy[state.lang].labels.students}</div>
+                    <div class="comparison-value">${formatPercent(row.students)}</div>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          </section>
+        </div>
+        ${singleValueTable(
+          state.lang === "en" ? "Students who say they know an institutional AI policy" : "Estudiantes que dicen conocer alguna normativa institucional sobre IA",
+          state.lang === "en"
+            ? "Knowledge of institutional rules remains low and uneven by institution type."
+            : "El conocimiento de normativas institucionales sigue siendo bajo y desigual según el tipo de institución.",
+          normsByInstitution,
+          "%",
+          copy[state.lang].labels.caveatPrivate
+        )}
+      `;
+    }
+
+    function renderBeyond() {
+      const section = copy[state.lang].sections.beyond;
+      return `
+        ${sectionHero(section)}
+        <div class="grid three">
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "AI for emotional support" : "IA para apoyo emocional"}</h3>
+            ${statCards([
+              {
+                label: copy[state.lang].labels.students,
+                value: "9%",
+                text: state.lang === "en" ? "Equivalent to 91,935 students in the report." : "Equivale a 91,935 estudiantes en el informe."
+              },
+              {
+                label: copy[state.lang].labels.faculty,
+                value: "5%",
+                text: state.lang === "en" ? "Equivalent to 5,918 faculty members in the report." : "Equivale a 5,918 docentes en el informe."
+              }
+            ])}
+          </section>
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Gender split among students who use AI this way" : "Distribución de género entre estudiantes que usan IA de esta forma"}</h3>
+            ${statCards([
+              {
+                label: state.lang === "en" ? "Women" : "Mujeres",
+                value: "61%",
+                text: state.lang === "en" ? "Women report lower overall AI use, but higher emotional-support use." : "Las mujeres reportan menor uso general de IA, pero mayor uso para apoyo emocional."
+              },
+              {
+                label: state.lang === "en" ? "Men" : "Hombres",
+                value: "35%",
+                text: state.lang === "en" ? "Men represent a smaller share in this specific use case." : "Los hombres representan una proporción menor en este uso específico."
+              },
+              {
+                label: state.lang === "en" ? "Other genders" : "Otros géneros",
+                value: "4%",
+                text: state.lang === "en" ? "The report explicitly includes other gender identities in this distribution." : "El informe incluye explícitamente a otros géneros en esta distribución."
+              }
+            ])}
+          </section>
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Perceived usefulness" : "Utilidad percibida"}</h3>
+            <div class="stat-grid">
+              <article class="stat-card">
+                <div class="stat-label">${state.lang === "en" ? "Reported usefulness" : "Utilidad reportada"}</div>
+                <div class="stat-value">90%+</div>
+                <div class="stat-text">${state.lang === "en"
+                  ? "Nine out of ten students and faculty who used AI for emotional support say it was useful."
+                  : "Nueve de cada diez estudiantes y docentes que usaron IA para apoyo emocional reportan que fue útil."}</div>
+              </article>
+            </div>
+          </section>
+        </div>
+        <section class="panel">
+          <h3 class="panel-title">${state.lang === "en" ? "Main reported emotional-support uses" : "Principales usos reportados de apoyo emocional"}</h3>
+          <ul class="bullet-list">
+            <li>${state.lang === "en" ? "Asking for advice about anxiety, stress, depression or sadness." : "Pedir consejos sobre ansiedad, estrés, depresión o tristeza."}</li>
+            <li>${state.lang === "en" ? "Venting or feeling listened to." : "Desahogarse o sentir que alguien escucha."}</li>
+            <li>${state.lang === "en" ? "Looking for motivation or encouraging words." : "Buscar motivación o palabras de ánimo."}</li>
+            <li>${state.lang === "en" ? "Simulating a supportive conversation." : "Simular una conversación con alguien que apoye."}</li>
+            <li>${state.lang === "en" ? "Assessing whether psychological help may be needed." : "Evaluar si podría necesitarse ayuda psicológica."}</li>
+          </ul>
+          <div class="note">${state.lang === "en"
+            ? "The report treats this as an emerging trend: AI can serve as a complementary channel, but it must not replace human and institutional care structures."
+            : "El informe trata esto como una tendencia emergente: la IA puede funcionar como canal complementario, pero no debe sustituir las estructuras humanas e institucionales de cuidado."}</div>
+        </section>
+      `;
+    }
+
+    function renderAgenda() {
+      const section = copy[state.lang].sections.agenda;
+      return `
+        ${sectionHero(section)}
+        <div class="grid two">
+          <section class="panel">
+            <h3 class="panel-title">${state.lang === "en" ? "Agenda framing" : "Encuadre de la agenda"}</h3>
+            <ul class="bullet-list">
+              <li>${state.lang === "en"
+                ? "The report says AI is already part of everyday academic life and can no longer be addressed through institutional waiting."
+                : "El informe afirma que la IA ya forma parte de la vida académica cotidiana y ya no puede abordarse desde la espera institucional."}</li>
+              <li>${state.lang === "en"
+                ? "The ten principles are presented as orientation points, not final or closed guidelines."
+                : "Los diez principios se presentan como orientaciones, no como lineamientos definitivos o cerrados."}</li>
+              <li>${state.lang === "en"
+                ? "The closing call is explicitly collective: government, institutions, faculty and students must all participate."
+                : "El llamado final es explícitamente colectivo: gobierno, instituciones, docentes y estudiantes deben participar."}</li>
+            </ul>
+          </section>
+          <section class="quote-panel">
+            <div class="quote-text">${state.lang === "en"
+              ? "Instead of prohibiting or trivializing, this is the moment to rethink what learning means in the new digital environment."
+              : "En vez de prohibir o banalizar, este es el momento de volver a pensar qué significa aprender en el nuevo entorno digital."}</div>
+            <div class="quote-author">Daniel Innerarity</div>
+          </section>
+        </div>
+        <section class="panel">
+          <h3 class="panel-title">${state.lang === "en" ? "Ten action principles" : "Diez principios de acción"}</h3>
+          <div class="panel-subtitle">${state.lang === "en"
+            ? "Condensed from pages 30-36 of the report."
+            : "Sintetizados a partir de las páginas 30-36 del informe."}</div>
+          <div class="principles-grid">
+            ${principles.map((item, index) => `
+              <article class="principle-card">
+                <div class="principle-index">${index + 1}</div>
+                <h4 class="principle-title">${t(item.title)}</h4>
+                <div class="principle-copy">${t(item.copy)}</div>
+              </article>
+            `).join("")}
+          </div>
+        </section>
+        <section class="panel">
+          <h3 class="panel-title">${state.lang === "en" ? "Final call to action" : "Llamado final a la acción"}</h3>
+          <div class="panel-subtitle">${state.lang === "en"
+            ? "The report calls for informed governance, permanent monitoring, collegial spaces for decision-making, updated regulation, teacher training and curricular redesign. In short: institutions should not respond to AI with silence, improvisation or denial."
+            : "El informe convoca a una gobernanza informada, seguimiento permanente, espacios colegiados de decisión, normatividad actualizada, formación docente y rediseño curricular. En síntesis: las instituciones no deben responder a la IA con silencio, improvisación o negación."}</div>
+        </section>
+      `;
+    }
+
+    function renderContent() {
+      const views = {
+        overview: renderOverview,
+        importance: renderImportance,
+        methodology: renderMethodology,
+        adoption: renderAdoption,
+        learning: renderLearning,
+        transformation: renderTransformation,
+        risks: renderRisks,
+        beyond: renderBeyond,
+        agenda: renderAgenda
+      };
+      document.getElementById("content").innerHTML = views[state.tab]();
+    }
+
+    function renderApp() {
+      renderHero();
+      renderTabs();
+      renderContent();
+      document.querySelectorAll("[data-lang]").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.lang === state.lang);
+      });
+      document.documentElement.lang = state.lang;
+    }
+
+    document.querySelectorAll("[data-lang]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.lang = btn.dataset.lang;
+        renderApp();
+      });
+    });
+
+    renderApp();
+  </script>
+</body>
+</html>
